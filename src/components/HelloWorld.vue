@@ -2,15 +2,31 @@
 import { ref } from 'vue'
 
 defineProps<{ msg: string }>()
+// defineProps({
+//   msg:{
+//     type:String,
+//     required:true,
+//     default:'MSG'
+//   }
+// })
 
+const emit = defineEmits<{
+  (e:'change',id:number):void
+  (e:'update',value:number):void
+}>()
 const count = ref(0)
+
+const buttonClick = function(){
+  count.value++
+  emit('update',count.value)
+}
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
+    <button type="button" @click="buttonClick">count is {{ count }}</button>
     <p>
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
