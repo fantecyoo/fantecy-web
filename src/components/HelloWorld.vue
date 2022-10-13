@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref,reactive,computed } from 'vue'
 
 defineProps<{ msg: string }>()
 // defineProps({
@@ -10,16 +10,39 @@ defineProps<{ msg: string }>()
 //   }
 // })
 
+interface Book {
+  title:string,
+  pages?:number
+}
+
+const state = reactive({
+  obj:{
+    count:1
+  }
+})
+
+let {obj} = state
+
+obj.count++
+
+console.log(state)
+
+const double = computed<number>(()=>{
+  return count.value*2
+})
+
 const emit = defineEmits<{
   (e:'change',id:number):void
   (e:'update',value:number):void
 }>()
-const count = ref(0)
+const count = ref<number>(0)
 
 const buttonClick = function(){
   count.value++
   emit('update',count.value)
 }
+
+const message = ref('')
 </script>
 
 <template>
@@ -27,6 +50,8 @@ const buttonClick = function(){
 
   <div class="card">
     <button type="button" @click="buttonClick">count is {{ count }}</button>
+    <input v-model="message" type="text" />
+    <div v-html="message"></div>
     <p>
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
