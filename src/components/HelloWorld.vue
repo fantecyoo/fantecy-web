@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref,reactive,computed } from 'vue'
 
-defineProps<{ msg: string }>()
+// defineProps<{ msg: string }>()
 // defineProps({
 //   msg:{
 //     type:String,
@@ -46,7 +46,6 @@ const message = ref('')
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
 
   <div class="card">
     <button type="button" @click="buttonClick">count is {{ count }}</button>
@@ -72,7 +71,7 @@ const message = ref('')
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .read-the-docs {
   color: #888;
 }
