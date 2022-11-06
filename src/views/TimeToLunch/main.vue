@@ -80,6 +80,30 @@ interface Menu {
   avgScore:number;
 }
 
+interface MenuScore {
+  id:string;
+  score?:number;
+  name:string;
+}
+
+const MenuScoreList = ref<MenuScore[]>([
+  {
+    id:'1',
+    name:'潇湘阁',
+    score:5
+  },
+  {
+    id:'2',
+    name:'达美乐披萨',
+    score:5
+  },
+  {
+    id:'3',
+    name:'姥姥家春饼',
+    score:4
+  }
+])
+
 const menuList = ref<Menu[]>([
   {
     name:'潇湘阁',
@@ -125,30 +149,44 @@ const getAvgStar = function(item:Menu):number{
   return all/item.favorUsers.length
 }
 
+const changeTab = function():void{
+  currentUser.value = ''
+}
+
 </script>
 
 <template>
   <div class="container">
     <div class="header">
-      <!-- <el-card class="box-card"> -->
-        <el-space wrap :size="20">
+        <el-space wrap :size="10">
+          <el-check-tag :checked="!currentUser" @change="changeTab">点菜</el-check-tag>
+          <el-icon style="position: relative;right:-5px"><UserFilled /></el-icon>
           <el-check-tag :checked="checked(user.id)" @change="changeUser(user.id)" v-for="user in userList" :key="user.id">{{user.name}}</el-check-tag>
         </el-space>
-      <!-- </el-card> -->
     </div>
     <div class="content">
       <el-space wrap :size="20">
-        <el-card class="box-card" style="height: 100%;" v-for="item in menuList" :key="item.id">
-          <div class="menu">
-            <div class="title">{{item.name}}</div>
-            <el-rate v-model="item.avgScore" allow-half disabled/>
-            <div class="user">谁吃({{item.favorUsers.length}}):</div>
-            <div>
-              <el-tag v-for="user in userList" :key="user.id" style="margin-right:5px">{{user.name}}</el-tag>
-            </div>
-            <div class="">上一次点: {{getLastTimeOrder(item.lastTimeOrder)}}</div>
-          </div>
-        </el-card>
+            <template v-if="!currentUser">
+              <el-card class="box-card" style="height: 100%;" v-for="item in menuList" :key="item.id">
+                    <div class="menu">
+                    <div class="title">{{item.name}}</div>
+                    <el-rate v-model="item.avgScore" allow-half disabled/>
+                    <div class="user">谁吃({{item.favorUsers.length}}):</div>
+                    <div>
+                      <el-tag v-for="user in userList" :key="user.id" style="margin-right:5px">{{user.name}}</el-tag>
+                    </div>
+                    <div class="">上一次点: {{getLastTimeOrder(item.lastTimeOrder)}}</div>
+                </div>
+              </el-card>
+            </template>
+            <template v-if="currentUser">
+              <el-card class="box-card" style="height: 100%;" v-for="item in MenuScoreList" :key="item.id">
+                <div class="menu">
+                  <div class="title">{{item.name}}</div>
+                  <el-rate v-model="item.score" allow-half clearable />
+                </div>
+              </el-card>
+            </template>
       </el-space>
     </div>
   </div>
