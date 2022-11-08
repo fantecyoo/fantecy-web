@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref,reactive,computed } from 'vue'
-
+import {getMenuList,getUserList,getUserScore,updateUserScore} from '@n/index'
 // defineProps<{ msg: string }>()
 // defineProps({
 //   msg:{
@@ -9,6 +9,33 @@ import { ref,reactive,computed } from 'vue'
 //     default:'MSG'
 //   }
 // })
+async function created(){
+  getMenu()
+  getUser()
+}
+
+async function getUser(){
+  const {data:res} = await getUserList()
+  const data:User[] = res.data.map((item:any)=>{
+    return {
+      username:item.name,
+      userId:item.id
+    }
+  })
+  userList.value = data
+}
+
+async function getMenu(){
+  const {data:res} = await getMenuList()
+  console.log(res)
+  const data:Menu[] = res.data
+  data.forEach((item)=>{
+    item.avgScore = item.favorUsers.length? item.favorUsers.reduce((pre,cur)=>pre+cur.score,0)/item.favorUsers.length:0
+  })
+  menuList.value = data
+}
+
+created()
 
 interface Book {
   title:string,
@@ -47,18 +74,24 @@ const message = ref('')
 const currentUser = ref<string>('')
 
 interface User {
-  name: string;
-  id:string
+  username: string;
+  userId:string
 }
 
-const userList = ref<User[]>([
-  {name:'fantecy',id:'1'},
-  {name:'curry',id:'2'},
-  {name:'lebron',id:'3'}
-])
+const userList = ref<User[]>()
 
-const changeUser = function(item:string):void{
+const changeUser = async function(item:string):Promise<void>{
    currentUser.value = item
+   const {data:res} = await getUserScore(item)
+   MenuScoreList.value = res.data
+}
+
+const changeScore = async function(item:MenuScore):Promise<void>{
+  updateUserScore({
+    menu:item.id,
+    user:currentUser.value,
+    score:item.score
+  })
 }
 
 const checked = function(userId:string):boolean{
@@ -86,57 +119,9 @@ interface MenuScore {
   name:string;
 }
 
-const MenuScoreList = ref<MenuScore[]>([
-  {
-    id:'1',
-    name:'潇湘阁',
-    score:5
-  },
-  {
-    id:'2',
-    name:'达美乐披萨',
-    score:5
-  },
-  {
-    id:'3',
-    name:'姥姥家春饼',
-    score:4
-  }
-])
+const MenuScoreList = ref<MenuScore[]>([])
 
-const menuList = ref<Menu[]>([
-  {
-    name:'潇湘阁',
-    id:'1',
-    favorUsers:[
-      {name:'fantecy',id:'1',score:5},
-      {name:'curry',id:'2',score:4},
-      {name:'lebron',id:'3',score:4}
-    ],
-    lastTimeOrder:'2022-11-01',
-    avgScore:5
-  },
-  {
-    name:'达美乐披萨',
-    id:'2',
-    favorUsers:[
-      {name:'fantecy',id:'1',score:5},
-      {name:'lebron',id:'3',score:5}
-    ],
-    lastTimeOrder:'2022-11-02',
-    avgScore:5
-  },
-  {
-    name:'姥姥家春饼',
-    id:'3',
-    favorUsers:[
-      {name:'fantecy',id:'1',score:4},
-      {name:'curry',id:'2',score:5},
-    ],
-    lastTimeOrder:'2022-11-03',
-    avgScore:4.5
-  }
-])
+const menuList = ref<Menu[]>([])
 
 const getLastTimeOrder = function(lastTime:string):string{
   return '两天前'
@@ -151,6 +136,7 @@ const getAvgStar = function(item:Menu):number{
 
 const changeTab = function():void{
   currentUser.value = ''
+  getMenu()
 }
 
 </script>
@@ -161,7 +147,7 @@ const changeTab = function():void{
         <el-space wrap :size="10">
           <el-check-tag :checked="!currentUser" @change="changeTab">点菜</el-check-tag>
           <el-icon style="position: relative;right:-5px"><UserFilled /></el-icon>
-          <el-check-tag :checked="checked(user.id)" @change="changeUser(user.id)" v-for="user in userList" :key="user.id">{{user.name}}</el-check-tag>
+          <el-check-tag :checked="checked(user.userId)" @change="changeUser(user.userId)" v-for="user in userList" :key="user.userId">{{user.username}}</el-check-tag>
         </el-space>
     </div>
     <div class="content">
@@ -173,7 +159,7 @@ const changeTab = function():void{
                     <el-rate v-model="item.avgScore" allow-half disabled/>
                     <div class="user">谁吃({{item.favorUsers.length}}):</div>
                     <div>
-                      <el-tag v-for="user in userList" :key="user.id" style="margin-right:5px">{{user.name}}</el-tag>
+                      <el-tag v-for="user in item.favorUsers" :key="user.userId" style="margin-right:5px;margin-bottom: 5px;">{{user.username}}</el-tag>
                     </div>
                     <div class="">上一次点: {{getLastTimeOrder(item.lastTimeOrder)}}</div>
                 </div>
@@ -183,7 +169,7 @@ const changeTab = function():void{
               <el-card class="box-card" style="height: 100%;" v-for="item in MenuScoreList" :key="item.id">
                 <div class="menu">
                   <div class="title">{{item.name}}</div>
-                  <el-rate v-model="item.score" allow-half clearable />
+                  <el-rate v-model="item.score" allow-half clearable @change="()=>changeScore(item)"/>
                 </div>
               </el-card>
             </template>
