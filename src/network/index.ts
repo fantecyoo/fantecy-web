@@ -1,5 +1,13 @@
 import axios from "axios"
 
+export function newMenu(data: any) {
+  return axios({
+    url: "/menu/new-menu",
+    method: "post",
+    data
+  })
+}
+
 export function getMenuList() {
   return axios({
     url: "/menu/list",
