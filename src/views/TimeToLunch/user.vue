@@ -5,6 +5,18 @@
       <el-icon style="position: relative;right:-5px;padding: 7px;">
         <UserFilled />
       </el-icon>
+      <el-input
+        v-if="inputVisible"
+        ref="InputRef"
+        v-model="newUser"
+        class="ml-1 w-20"
+        size="small"
+        @keyup.enter="handleInputConfirm"
+        @blur="handleInputConfirm"
+      />
+      <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
+        + 新用户
+      </el-button>
       <el-check-tag :checked="checked(user.userId)"
                     @change="changeUser(user.userId)"
                     v-for="user in userList"
@@ -33,20 +45,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed,nextTick } from "vue";
 import {
   getMenuList,
   getUserList,
   getUserScore,
   updateUserScore,
+  postNewUser
 } from "@n/index";
+import { ElInput } from 'element-plus'
 
 interface User {
   username: string;
   userId: string;
 }
 
-const userList = ref<User[]>();
+const userList = ref<User[]>([]);
 
 const currentUser = ref<string>("");
 
@@ -92,6 +106,34 @@ async function getUser() {
     };
   });
   userList.value = data;
+}
+
+const inputVisible = ref(false)
+
+const newUser = ref('')
+
+const InputRef = ref<InstanceType<typeof ElInput>>()
+
+const handleInputConfirm = async () => {
+  if (newUser.value) {
+    const {data:res} = await postNewUser({username:newUser.value})
+    console.log(res)
+    if(res.data){
+      userList.value.push({
+        username:newUser.value,
+        userId:res.data
+      })
+    }
+  }
+  inputVisible.value = false
+  newUser.value = ''
+}
+
+const showInput = () => {
+  inputVisible.value = true
+  nextTick(() => {
+    InputRef.value!.input!.focus()
+  })
 }
 
 created();

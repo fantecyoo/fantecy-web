@@ -7,10 +7,10 @@
               :size="20">
       <el-card class="box-card"
                style="height: 100%;"
-               v-for="item in menuList"
+               v-for="(item,index) in menuList"
                :key="item.id">
         <div class="menu">
-          <el-icon class="delete">
+          <el-icon class="delete" @click="handleDeleteMenu(item,index)">
             <Delete />
           </el-icon>
           <div class="title">{{item.name}}</div>
@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
-import { getMenuList, newMenu } from "@n/index";
+import { getMenuList, newMenu, deleteMenu } from "@n/index";
 
 // 生命周期
 created();
@@ -103,6 +103,11 @@ async function addMenu() {
   const { data: res } = await newMenu(newMenuForm.value);
   dialogVisible.value = false;
   getMenu();
+}
+
+async function handleDeleteMenu(item:Menu,index:number) {
+   deleteMenu(item.id)
+   menuList.value.splice(index,1)
 }
 </script>
 

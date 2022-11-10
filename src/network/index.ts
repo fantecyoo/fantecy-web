@@ -8,6 +8,13 @@ export function newMenu(data: any) {
   })
 }
 
+export function deleteMenu(id: string) {
+  return axios({
+    url: `/menu/delete-menu/${id}`,
+    method: "get"
+  })
+}
+
 export function getMenuList() {
   return axios({
     url: "/menu/list",
@@ -19,6 +26,14 @@ export function getUserList() {
   return axios({
     url: "/users/list",
     method: "get"
+  })
+}
+
+export function postNewUser(data: any) {
+  return axios({
+    url: "/users/new-user",
+    method: "post",
+    data
   })
 }
 
