@@ -10,7 +10,8 @@
                v-for="(item,index) in menuList"
                :key="item.id">
         <div class="menu">
-          <el-icon class="delete" @click="handleDeleteMenu(item,index)">
+          <el-icon class="delete"
+                   @click="handleDeleteMenu(item,index)">
             <Delete />
           </el-icon>
           <div class="title">{{item.name}}</div>
@@ -23,7 +24,7 @@
                     :key="user.userId"
                     style="margin-right:5px;margin-bottom: 5px;">{{user.username}}</el-tag>
           </div>
-          <div class="">上一次点: {{getLastTimeOrder(item.lastTimeOrder)}}</div>
+          <!-- <div class="">上一次点: {{getLastTimeOrder(item.lastTimeOrder)}}</div> -->
         </div>
       </el-card>
     </el-space>
@@ -50,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
-import { getMenuList, newMenu, deleteMenu } from "@n/index";
+import { getMenuList, newMenu, deleteMenu } from "../../network/index";
 
 // 生命周期
 created();
@@ -101,13 +102,14 @@ const newMenuForm = ref<any>({});
 
 async function addMenu() {
   const { data: res } = await newMenu(newMenuForm.value);
+  newMenuForm.value.name = "";
   dialogVisible.value = false;
   getMenu();
 }
 
-async function handleDeleteMenu(item:Menu,index:number) {
-   deleteMenu(item.id)
-   menuList.value.splice(index,1)
+async function handleDeleteMenu(item: Menu, index: number) {
+  deleteMenu(item.id);
+  menuList.value.splice(index, 1);
 }
 </script>
 
