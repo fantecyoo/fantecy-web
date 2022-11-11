@@ -15,10 +15,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/menu": {
-        target: url
-      },
-      "/users": {
+      "/api": {
         target: url
       }
     }
