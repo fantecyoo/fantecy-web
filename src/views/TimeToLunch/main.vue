@@ -47,7 +47,7 @@ const message = ref("");
 
 const activeIndex = ref("1");
 
-function handleSelect(index: "string") {
+function handleSelect(index: string) {
   activeIndex.value = index;
 }
 </script>

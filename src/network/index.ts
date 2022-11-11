@@ -37,7 +37,7 @@ export function postNewUser(data: any) {
   })
 }
 
-export function getUserScore(userId: number) {
+export function getUserScore(userId: string) {
   return axios({
     url: `/menu/score/${userId}`,
     method: "get"

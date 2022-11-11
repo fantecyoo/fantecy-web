@@ -10,7 +10,8 @@ export default defineConfig({
     alias: {
       "@c": path.resolve(__dirname, "./src/components"),
       "@v": path.resolve(__dirname, "./src/views"),
-      "@n": path.resolve(__dirname, "./src/network")
+      "@n": path.resolve(__dirname, "./src/network"),
+      "@": path.resolve(__dirname, "./src")
     }
   },
   server: {
