@@ -18,29 +18,37 @@
                  @click="showInput">
         + 新用户
       </el-button>
+      <el-button @click="editStatus=!editStatus"
+                 size="small">{{editStatus? '退出编辑':'编辑'}}</el-button>
       <el-check-tag :checked="checked(user.userId)"
                     @change="changeUser(user.userId)"
+                    style="font-size:14px;line-height: 16px;"
                     v-for="user in userList"
-                    :key="user.userId">{{user.username}}</el-check-tag>
+                    :key="user.userId">{{user.username}}
+        <template v-if="editStatus">
+          <el-icon class="delete"
+                   @click="handleDeleteUser(user)">
+            <Delete />
+          </el-icon>
+        </template>
+      </el-check-tag>
     </el-space>
   </div>
   <div class="content">
     <el-space wrap
               :size="20">
-      <template v-if="currentUser">
-        <el-card class="box-card"
-                 style="height: 100%;"
-                 v-for="item in MenuScoreList"
-                 :key="item.id">
-          <div class="menu">
-            <div class="title">{{item.name}}</div>
-            <el-rate v-model="item.score"
-                     allow-half
-                     clearable
-                     @change="()=>changeScore(item)" />
-          </div>
-        </el-card>
-      </template>
+      <el-card class="box-card"
+               style="height: 100%;"
+               v-for="item in MenuScoreList"
+               :key="item.id">
+        <div class="menu">
+          <div class="title">{{item.name}}</div>
+          <el-rate v-model="item.score"
+                   allow-half
+                   clearable
+                   @change="()=>changeScore(item)" />
+        </div>
+      </el-card>
     </el-space>
   </div>
 </template>
@@ -137,6 +145,10 @@ const showInput = () => {
   });
 };
 
+// 管理功能
+const editStatus = ref(false);
+function handleDeleteUser(item: User) {}
+
 created();
 </script>
 
@@ -155,5 +167,14 @@ created();
 }
 .header {
   margin-bottom: 30px;
+}
+.delete {
+  margin-left: 5px;
+  float: right;
+  cursor: pointer;
+  &:hover {
+    color: red;
+    font-weight: bold;
+  }
 }
 </style>
