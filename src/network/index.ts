@@ -29,6 +29,13 @@ export function getUserList() {
   })
 }
 
+export function deleteUser(userId: any) {
+  return axios({
+    url: `/api/users/${userId}`,
+    method: "delete"
+  })
+}
+
 export function postNewUser(data: any) {
   return axios({
     url: "/api/users/new-user",

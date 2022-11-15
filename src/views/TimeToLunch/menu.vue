@@ -93,6 +93,7 @@ async function getMenu() {
       ? item.favorUsers.reduce((pre, cur) => pre + cur.score, 0) /
         item.favorUsers.length
       : 0;
+    item.favorUsers = item.favorUsers.filter((user) => user.score > 1);
   });
   menuList.value = data;
 }

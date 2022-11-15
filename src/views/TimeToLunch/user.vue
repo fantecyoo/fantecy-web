@@ -5,6 +5,8 @@
       <el-icon style="position: relative;right:-5px;padding: 7px;">
         <UserFilled />
       </el-icon>
+      <el-button @click="editStatus=!editStatus"
+                 size="small">{{editStatus? '退出编辑':'编辑'}}</el-button>
       <el-input v-if="inputVisible"
                 ref="InputRef"
                 v-model="newUser"
@@ -18,8 +20,6 @@
                  @click="showInput">
         + 新用户
       </el-button>
-      <el-button @click="editStatus=!editStatus"
-                 size="small">{{editStatus? '退出编辑':'编辑'}}</el-button>
       <el-check-tag :checked="checked(user.userId)"
                     @change="changeUser(user.userId)"
                     style="font-size:14px;line-height: 16px;"
@@ -27,7 +27,7 @@
                     :key="user.userId">{{user.username}}
         <template v-if="editStatus">
           <el-icon class="delete"
-                   @click="handleDeleteUser(user)">
+                   @click.stop="handleDeleteUser(user)">
             <Delete />
           </el-icon>
         </template>
@@ -61,6 +61,7 @@ import {
   getUserScore,
   updateUserScore,
   postNewUser,
+  deleteUser,
 } from "../../network/index";
 import { ElInput } from "element-plus";
 
@@ -147,7 +148,10 @@ const showInput = () => {
 
 // 管理功能
 const editStatus = ref(false);
-function handleDeleteUser(item: User) {}
+async function handleDeleteUser(item: User) {
+  const { data: res } = await deleteUser(item.userId);
+  getUser();
+}
 
 created();
 </script>
